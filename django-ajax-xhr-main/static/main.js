@@ -1,11 +1,9 @@
-// https://docs.djangoproject.com/en/3.2/ref/csrf/#acquiring-the-token-if-csrf-use-sessions-and-csrf-cookie-httponly-are-false
 function getCookie(name) {
   let cookieValue = null;
   if (document.cookie && document.cookie !== "") {
     const cookies = document.cookie.split(";");
     for (let i = 0; i < cookies.length; i++) {
       const cookie = cookies[i].trim();
-      // Does this cookie string begin with the name we want?
       if (cookie.substring(0, name.length + 1) === (name + "=")) {
         cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
         break;
@@ -16,14 +14,15 @@ function getCookie(name) {
 }
 
 
-function getAllTodos(url) {
-  fetch(url, {
-    headers: {
-      "X-Requested-With": "XMLHttpRequest",
-    }
-  })
-  .then(response => response.json())
-  .then(data => {
+async function getAllTodos(url) {
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+      }
+    });
+    
+    const data = await response.json(); 
     const todoList = document.getElementById("todoList");
     todoList.innerHTML = "";
 
@@ -32,58 +31,69 @@ function getAllTodos(url) {
         <li>
           <p>Task: ${todo.task}</p>
           <p>Completed?: ${todo.completed}</p>
-        </li>`
-        todoList.innerHTML += todoHTMLElement;
+        </li>`;
+      todoList.innerHTML += todoHTMLElement;
     });
-  });
+  } catch (error) {
+    console.error('Error al obtener todos:', error);
+  }
 }
 
+// Añadir un todo usando async/await
+async function addTodo(url, payload) {
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+        "X-CSRFToken": getCookie("csrftoken"),
+      },
+      body: JSON.stringify({ payload: payload })
+    });
 
-function addTodo(url, payload) {
-  fetch(url, {
-    method: "POST",
-    credentials: "same-origin",
-    headers: {
-      "X-Requested-With": "XMLHttpRequest",
-      "X-CSRFToken": getCookie("csrftoken"),
-    },
-    body: JSON.stringify({payload: payload})
-  })
-  .then(response => response.json())
-  .then(data => {
+    const data = await response.json(); // Espera la respuesta en formato JSON
     console.log(data);
-  });
+  } catch (error) {
+    console.error('Error al añadir todo:', error);
+  }
 }
 
+// Actualizar un todo usando async/await
+async function updateTodo(url, payload) {
+  try {
+    const response = await fetch(url, {
+      method: "PUT",
+      credentials: "same-origin",
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+        "X-CSRFToken": getCookie("csrftoken"),
+      },
+      body: JSON.stringify({ payload: payload })
+    });
 
-function updateTodo(url, payload) {
-  fetch(url, {
-    method: "PUT",
-    credentials: "same-origin",
-    headers: {
-      "X-Requested-With": "XMLHttpRequest",
-      "X-CSRFToken": getCookie("csrftoken"),
-    },
-    body: JSON.stringify({payload: payload})
-  })
-  .then(response => response.json())
-  .then(data => {
+    const data = await response.json(); // Espera la respuesta en formato JSON
     console.log(data);
-  });
+  } catch (error) {
+    console.error('Error al actualizar todo:', error);
+  }
 }
 
+// Eliminar un todo usando async/await
+async function deleteTodo(url) {
+  try {
+    const response = await fetch(url, {
+      method: "DELETE",
+      credentials: "same-origin",
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+        "X-CSRFToken": getCookie("csrftoken"),
+      }
+    });
 
-function deleteTodo(url) {
-  fetch(url, {
-    method: "DELETE",
-    credentials: "same-origin",
-    headers: {
-      "X-Requested-With": "XMLHttpRequest",
-      "X-CSRFToken": getCookie("csrftoken"),
-    }
-  })
-  .then(response => response.json())
-  .then(data => {
+    const data = await response.json(); // Espera la respuesta en formato JSON
     console.log(data);
-  });
+  } catch (error) {
+    console.error('Error al eliminar todo:', error);
+  }
 }
