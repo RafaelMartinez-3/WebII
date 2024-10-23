@@ -39,7 +39,6 @@ async function getAllTodos(url) {
   }
 }
 
-// Añadir un todo usando async/await
 async function addTodo(url, payload) {
   try {
     const response = await fetch(url, {
@@ -52,14 +51,14 @@ async function addTodo(url, payload) {
       body: JSON.stringify({ payload: payload })
     });
 
-    const data = await response.json(); // Espera la respuesta en formato JSON
+    const data = await response.json(); 
     console.log(data);
   } catch (error) {
     console.error('Error al añadir todo:', error);
   }
 }
 
-// Actualizar un todo usando async/await
+
 async function updateTodo(url, payload) {
   try {
     const response = await fetch(url, {
@@ -72,7 +71,7 @@ async function updateTodo(url, payload) {
       body: JSON.stringify({ payload: payload })
     });
 
-    const data = await response.json(); // Espera la respuesta en formato JSON
+    const data = await response.json(); 
     console.log(data);
   } catch (error) {
     console.error('Error al actualizar todo:', error);
@@ -91,7 +90,7 @@ async function deleteTodo(url) {
       }
     });
 
-    const data = await response.json(); // Espera la respuesta en formato JSON
+    const data = await response.json(); 
     console.log(data);
   } catch (error) {
     console.error('Error al eliminar todo:', error);
